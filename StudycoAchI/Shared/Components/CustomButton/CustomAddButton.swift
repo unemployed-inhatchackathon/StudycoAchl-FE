@@ -33,13 +33,12 @@ struct CustomAddButton: View {
             ZStack{
                 RoundedRectangle(cornerRadius: 30)
                     .foregroundStyle(.blue)
-                    .opacity(0.1)
+                    .opacity(0.05)
                 RoundedRectangle(cornerRadius: 30)
-                    .stroke(.gray, lineWidth: 1)
+                    .stroke(.gray.opacity(0.4), lineWidth: 1)
             }
         )
-        .padding(16)
-        
+      
         
     }
 }
