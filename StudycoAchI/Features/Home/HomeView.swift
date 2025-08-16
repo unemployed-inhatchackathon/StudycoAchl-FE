@@ -12,19 +12,35 @@ struct HomeView: View {
         ScrollView{
             // 헤더
             HomeHeader()
-
+            
             Spacer()
                 .frame(height: 26)
-
+            
             // 과목 추가 버튼
             CustomAddButton(btnType: .subject, btnAction: {})
-
+            
             Spacer()
                 .frame(height: 26)
             
             // 과목 리스트
             ForEach(0..<5) { _ in
                 SubjectCellView(title: "과목명")
+                   
+                    .contextMenu{
+                        Text("과목명")
+                        Button {
+                            
+                        } label: {
+                            Text("수정")
+                        }
+                        Button {
+                            
+                        } label: {
+                            Text("삭제")
+                            
+                        }
+                    }
+                    .padding(.vertical, 8)
             }
             
             Spacer()
@@ -41,7 +57,6 @@ struct HomeHeader: View {
                 .font(.system(size: 24))
             Spacer()
         }
-        
     }
 }
 
