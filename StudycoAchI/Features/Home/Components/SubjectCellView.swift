@@ -22,7 +22,6 @@ struct SubjectCellView: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(.gray.opacity(0.4), lineWidth: 1)
         )
-        .padding(.vertical, 10)
     }
 }
 
