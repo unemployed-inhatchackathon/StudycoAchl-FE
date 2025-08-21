@@ -13,8 +13,10 @@ struct ChatView: View {
         
         ZStack {
             ScrollView {
-                UserMessageBox(content: "안녕하세요.")
                 
+            
+                UserMessageBox(content: "안녕하세요.")
+                AiMessageBox(content: "안녕하세요. 저는 어재선입니다.")
             }
             VStack {
                 Spacer()
@@ -34,46 +36,7 @@ private struct InputUI: View {
         VStack {
             Divider()
             HStack{
-                Menu {
-                    Button{
-                        
-                    } label:{
-                        Label("카메라",systemImage: "camera.fill")
-                    }
-                    Button{
-                        
-                    } label:{
-                        Label("사진",systemImage: "photo.fill")
-                    }
-                    Button{
-                        
-                    } label:{
-                        Label("학습자료",systemImage: "text.book.closed.fill")
-                    }
-                    Button{
-                        
-                    } label:{
-                        Label("녹음자료",systemImage: "microphone.fill")
-                    }
-                    Button{
-                        
-                    } label:{
-                        Label("파일",systemImage: "folder.fill")
-                    }
-                    
-                    
-                    
-                    //TODO: - Plus 버튼 눌렀을 때 액션 추가
-                } label: {
-                    Image(systemName: "plus")
-                        .resizable()
-                        .foregroundStyle(.blue)
-                        .scaledToFit()
-                        .frame(width: 16)
-                        .padding(8)
-                    
-                }
-                
+                MenuButtonView()
                 ZStack {
                     if text.isEmpty {
                         HStack{
@@ -117,13 +80,24 @@ private struct InputUI: View {
     }
 }
 
+private struct AiMessageBox: View {
+    var content: String
+    fileprivate var body: some View {
+        VStack {
+            Text(content)
+                .foregroundStyle(.black)
+                .padding(8)
+                
+        }
+    }
+}
 
 private struct UserMessageBox: View {
     var content: String
     fileprivate var body: some View {
         HStack{
             Spacer()
-            VStack{
+            VStack(alignment: .leading){
                 Text(content)
                     .foregroundStyle(.black)
                     .padding(8)
@@ -134,6 +108,51 @@ private struct UserMessageBox: View {
     }
 }
 
+
+private struct MenuButtonView: View {
+    
+    fileprivate var body: some View {
+        Menu {
+            Button{
+                
+            } label:{
+                Label("카메라",systemImage: "camera.fill")
+            }
+            Button{
+                
+            } label:{
+                Label("사진",systemImage: "photo.fill")
+            }
+            Button{
+                
+            } label:{
+                Label("학습자료",systemImage: "text.book.closed.fill")
+            }
+            Button{
+                
+            } label:{
+                Label("녹음자료",systemImage: "microphone.fill")
+            }
+            Button{
+                
+            } label:{
+                Label("파일",systemImage: "folder.fill")
+            }
+            
+            
+            
+            //TODO: - Plus 버튼 눌렀을 때 액션 추가
+        } label: {
+            Image(systemName: "plus")
+                .resizable()
+                .foregroundStyle(.blue)
+                .scaledToFit()
+                .frame(width: 16)
+                .padding(8)
+            
+        }
+    }
+}
 #Preview {
     ChatView()
 }
