@@ -6,13 +6,3 @@
 //
 
 import SwiftUI
-import ComposableArchitecture
-
-@Reducer
-struct HomeFeature {
-    @ObservableState
-    struct State: Equatable {
-        
-    }
-    
-}
