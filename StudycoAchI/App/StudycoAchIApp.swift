@@ -11,7 +11,7 @@ import SwiftUI
 struct StudycoAchIApp: App {
     var body: some Scene {
         WindowGroup {
-            ChatView(text: "", )
+          RootView()
         }
     }
 }
