@@ -31,7 +31,7 @@ private struct ProblemAddButton: View {
             HStack {
                 Spacer()
                 Image(systemName: "plus")
-                Text("세 문제 만들기")
+                Text("새 문제 만들기")
                     .font(.system(size: 24))
                 Spacer()
             }
