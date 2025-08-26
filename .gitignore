@@ -142,7 +142,8 @@ xcuserdata
 **/xcshareddata/WorkspaceSettings.xcsettings
 
 # apiKey
-/Users/jaesun/Developer/swfit/Inhatc/StudycoAchI/StudycoAchI/Resources/OpenAIConfig.swift
+StudycoAchl/Resources/OpenAIConfig.swift
 # End of https://www.toptal.com/developers/gitignore/api/swift,swiftpackagemanager,swiftpm,xcode,macos
 
 
+StudycoAchI/Resources/OpenAIConfig.swift
