@@ -8,8 +8,8 @@
 import Foundation
 
 
-struct Subject {
-    let uuid: String
-    let title: String
-    
+struct Subject: Equatable, Hashable {
+    let id: String
+    var title: String
+
 }

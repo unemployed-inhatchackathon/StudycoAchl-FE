@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+
+struct ChatCompletionResponse: Codable {
+    let choices: [Choice]
+}
+
+struct Choice: Codable {
+    let message: Message
+}

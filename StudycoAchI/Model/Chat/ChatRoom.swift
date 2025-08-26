@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct ChatRoom: Hashable, Equatable {
+    let id: String
+    let title: String
+    let subjectName: String
+}

@@ -23,10 +23,3 @@ struct Message: Codable {
     let content: String
 }
 
-struct ChatCompletionResponse: Codable {
-    let choices: [Choice]
-}
-
-struct Choice: Codable {
-    let message: Message
-}

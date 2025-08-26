@@ -8,15 +8,26 @@
 import SwiftUI
 
 struct ChatListView: View {
+    @EnvironmentObject private var chatManager: ChatroomManager
+    @EnvironmentObject private var pathModel: PathModel
+    @EnvironmentObject private var rootViewModel: RootViewModel
+    
+    let subject: Subject
     @State private var showAlert: Bool = false
-    @State private var chatText = ""
+    @State private var newChatTitle = ""
+    @State private var selectRoomId: String?
+    @State private var modalType: CustomChatModalType = .add
+
     var body: some View {
         ZStack {
             VStack {
-                CustomNavigationBar(title: "과목명")
+                CustomNavigationBar(leftBtnAction: {
+                    rootViewModel.goBack()
+                }, leftBtnType: .chatList, title: subject.title)
                 Spacer()
                     .frame(height: 20)
                 CustomAddButton(btnType: .chat) {
+                    modalType = .add
                     showAlert = true
                 }
                 
@@ -37,9 +48,35 @@ struct ChatListView: View {
                         .foregroundStyle(.gray)
                 } else {
                     List {
-                        ForEach(0..<5) { _ in
-                            
-                            ChatListCellView(title: "채팅방")
+                        ForEach(chatManager.chatRooms,id: \.id) { room in
+                            if subject.title == room.subjectName {
+                                ChatListCellView(title: room.title)
+                                    .contextMenu{
+                                        Text("\(subject.title)")
+                                        Button {
+                                            modalType = .edit
+                                            showAlert = true
+                                            selectRoomId = room.id
+                                           
+                                        } label: {
+                                            Text("수정")
+                                        }
+                                        Button {
+                                            modalType = .delete
+                                            showAlert = true
+                                            selectRoomId = room.id
+                                            
+                                        } label: {
+                                            Text("삭제")
+                                        }
+                                    }
+                                    .padding(.vertical, 8)
+                                    .onTapGesture {
+                                        print("눌림")
+                                        rootViewModel.navigate(to: .chatDetailView(room: room))
+                                    }
+                            }
+                           
                         }
                     }
                     .listStyle(.plain)
@@ -56,14 +93,19 @@ struct ChatListView: View {
                         showAlert = false
                     }
                 CustomChatModal(
-                    text: $chatText,
-                    modalType: .add
+                    text: $newChatTitle, checkButtonAction: {
+                        _ = chatManager.createNewChatRoom(title: newChatTitle.isEmpty ? nil : newChatTitle, subjectName: subject.title)
+                        newChatTitle = ""
+                    }, deleteButtonAction: {chatManager.deleteChatRoom(selectRoomId ?? "")}, isShowAlert: $showAlert, modalType: modalType
                 )
                 .transition(.scale.combined(with: .opacity))
             }
         }
         .animation(.spring(duration: 0.3), value: showAlert)
+        .toolbar(.hidden, for:.tabBar)
     }
+    
+    
 }
 
 
@@ -79,5 +121,8 @@ private struct ChatListCellView: View {
 }
 
 #Preview {
-    ChatListView()
+    ChatListView(subject: Subject(id: UUID().uuidString, title: ""))
+        .environmentObject(PathModel())
+        .environmentObject(ChatroomManager())
+        .environmentObject(RootViewModel())
 }

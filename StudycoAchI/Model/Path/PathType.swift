@@ -8,9 +8,9 @@
 import Foundation
 
 enum PathType: Hashable {
-    case learningMenuView(subject: String)
-    case cahtListView
-    case chatDetailView(id: UUID)
+    case learningMenuView(subject: Subject)
+    case cahtListView(subject: Subject)
+    case chatDetailView(room: ChatRoom)
     
     
     

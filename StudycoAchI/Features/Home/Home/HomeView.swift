@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State var showAlert: Bool = false
-    @State var alertType: SubjectModalType = .add
-    @State var subjectTitle: String = ""
+    @EnvironmentObject private var homeViewModel: HomeViewModel
+    @EnvironmentObject private var pathModel: PathModel
+    @EnvironmentObject private var rootViewModel: RootViewModel
+    
     var body: some View {
         ZStack {
             VStack {
@@ -24,32 +25,41 @@ struct HomeView: View {
                         .frame(height: 26)
                     // 과목 추가 버튼
                     CustomAddButton(btnType: .subject, btnAction: {
-                        showAlert = true
-                        alertType = .add
+                        homeViewModel.alertType = .add
+                        homeViewModel.isShowAlert = true
+                        
                     })
                     Spacer()
                         .frame(height: 26)
                     // 과목 리스트
-                    ForEach(0..<5) { _ in
-                        SubjectCellView(title: "과목명")
+                    ForEach(homeViewModel.subjects, id: \.id) { subject in
+                        SubjectCellView(title: subject.title)
                             .contextMenu{
-                                Text("과목명")
+                                Text("\(subject.title)")
                                 Button {
-                                    alertType = .edit
-                                    showAlert = true
+                                    homeViewModel.alertType = .edit
+                                    homeViewModel.isShowAlert = true
+                                    homeViewModel.selectedSubject = subject
                                    
                                 } label: {
                                     Text("수정")
                                 }
                                 Button {
-                                    alertType = .delete
-                                    showAlert = true
+                                    homeViewModel.alertType = .delete
+                                    homeViewModel.isShowAlert = true
+                                    homeViewModel.selectedSubject = subject
                                     
                                 } label: {
                                     Text("삭제")
                                 }
                             }
                             .padding(.vertical, 8)
+                            .onTapGesture {
+                                print("눌림")
+                                rootViewModel.navigate(to: .learningMenuView(subject: subject))
+                            
+                            }
+                        
                     }
                     
                     Spacer()
@@ -58,22 +68,30 @@ struct HomeView: View {
                 
                 
             }
-            if showAlert {
+            if homeViewModel.isShowAlert {
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
                     .onTapGesture {
-                        showAlert = false
+                        homeViewModel.dismissAlert()
                     }
                 
                 // 커스텀 알럿
-                CustomSubjectModalView(text: $subjectTitle, modalType: alertType, xButtonAction: { showAlert = false })
+                CustomSubjectModalView(
+                    text: $homeViewModel.newSubjectName,
+                    modalType: homeViewModel.alertType,
+                    xButtonAction: { homeViewModel.dismissAlert() },
+                    addButtonAction: { homeViewModel.addSubject()},
+                    cancelButtonAction: {homeViewModel.dismissAlert()},
+                    deleteButtonAction: {homeViewModel.deleteSubject(homeViewModel.selectedSubject?.id  ?? UUID().uuidString)},
+                    editButtonAction: {homeViewModel.editSubject( homeViewModel.selectedSubject?.id ?? UUID().uuidString, newTitle: homeViewModel.newSubjectName)}
+                )
                     .transition(.scale.combined(with: .opacity))
             }
             
         }
-        .animation(.spring(duration: 0.3), value: showAlert)
+        .animation(.spring(duration: 0.3), value: homeViewModel.isShowAlert)
         .onDisappear {
-            showAlert = false
+            homeViewModel.dismissAlert()
         }
     }
 }

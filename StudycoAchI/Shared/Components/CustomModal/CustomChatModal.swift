@@ -15,14 +15,19 @@ enum CustomChatModalType {
 
 struct CustomChatModal: View {
     @Binding var text: String
+    let checkButtonAction : () -> Void
+    let deleteButtonAction : () -> Void
+    @Binding var isShowAlert: Bool
     let modalType: CustomChatModalType
+
+    
     
     var body: some View {
         VStack {
             HStack {
                 Spacer()
                 Button{
-                    
+                    isShowAlert = false
                 }label: {
                     Image(systemName: "xmark")
                         .foregroundStyle(.black)
@@ -67,7 +72,8 @@ struct CustomChatModal: View {
            
             if modalType != .delete {
                 Button{
-                    
+                    isShowAlert = false
+                    checkButtonAction()
                 } label: {
                     Spacer()
                     Text("학인")
@@ -79,7 +85,8 @@ struct CustomChatModal: View {
                 HStack {
                     
                     Button{
-
+                        isShowAlert = false
+                        deleteButtonAction()
                     } label: {
                         Spacer()
                         Text("삭제하기")
@@ -88,7 +95,7 @@ struct CustomChatModal: View {
                     .buttonStyle(.borderedProminent)
                     
                     Button{
-                        
+                        isShowAlert = false
                     } label: {
                         Spacer()
                         Text("취소")
@@ -115,5 +122,5 @@ struct CustomChatModal: View {
 }
 
 #Preview {
-    CustomChatModal(text: Binding.constant(""), modalType: .add)
+    CustomChatModal(text: Binding.constant(""), checkButtonAction: {}, deleteButtonAction: {}, isShowAlert: Binding.constant(false), modalType: .add)
 }

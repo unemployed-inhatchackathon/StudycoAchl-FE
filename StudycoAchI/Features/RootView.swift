@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct RootView: View {
-    @StateObject private var pathmodel = PathModel()
+    @StateObject private var pathModel = PathModel()
     @StateObject private var rootViewModel = RootViewModel()
+    @StateObject private var chatManger = ChatroomManager()
+    @StateObject private var homeViewModel = HomeViewModel()
     var body: some View {
         ZStack {
             TabView(selection: $rootViewModel.selectedTab) {
@@ -18,11 +20,15 @@ struct RootView: View {
                         .navigationDestination(for: PathType.self) { path in
                             destinationView(for: path)
                         }
-                }.tabItem {
+                        .environmentObject(homeViewModel)
+                     
+                }
+                .environmentObject(pathModel)
+                .tabItem {
                     Image(systemName: rootViewModel.selectedTab == .home ? "house" : "house")
                 }
                 .tag(Tab.home)
-                
+               
                 BookMarkView()
                     .tabItem {
                         Image(systemName:
@@ -43,19 +49,23 @@ struct RootView: View {
             }
             .environmentObject(rootViewModel)
             
-            SeperatorLineView()
         }
     }
     
     @ViewBuilder
     func destinationView(for path: PathType) -> some View {
         switch path {
-        case .learningMenuView:
-            LearningMenuView()
-        case .chatDetailView(_):
-            ChatView()
-        case .cahtListView:
-            ChatListView()
+        case .learningMenuView(let subject):
+                LearningMenuView(subject: subject)
+                    
+                .navigationBarBackButtonHidden(true)
+        case .chatDetailView(let room):
+            ChatView(chatManager: chatManger, room: room)
+                .navigationBarBackButtonHidden(true)
+        case .cahtListView(let subject):
+            ChatListView(subject: subject)
+                .environmentObject(chatManger)
+                .navigationBarBackButtonHidden(true)
         }
     }
 }

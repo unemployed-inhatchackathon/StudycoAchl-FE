@@ -8,21 +8,31 @@
 import SwiftUI
 
 struct LearningMenuView: View {
+    @EnvironmentObject private var pathModel: PathModel
+    @EnvironmentObject private var rootViewModel: RootViewModel
+    let subject: Subject
     var columns: [GridItem] = Array(repeating: .init(.flexible(),spacing: 30), count: 2)
     var body: some View {
         VStack{
-            CustomNavigationBar(leftBtnAction: {}, leftBtnType: .learning, title: "")
-            Text("과목명")
+            CustomNavigationBar(leftBtnAction: {
+                
+                rootViewModel.goBack()
+            }, leftBtnType: .learning, title: "")
+            Text("\(subject.title)")
                 .font(.system(size: 30))
             LazyVGrid(columns: columns) {
                 ForEach(LearningType.allCases) { learningType in
                     switch learningType {
                     case .data:
-                        LearningCellView(learningType: .question, tapped: {})
+                        LearningCellView(learningType: .data, tapped: {
+
+                        })
                     case .problem:
-                        LearningCellView(learningType: .data, tapped: {})
-                    case .question:
                         LearningCellView(learningType: .problem, tapped: {})
+                    case .question:
+                        LearningCellView(learningType: .question, tapped: {
+                            rootViewModel.navigate(to: .cahtListView(subject: subject))
+                        })
                     case .recording:
                         LearningCellView(learningType: .recording, tapped: {})
                     }
@@ -31,11 +41,12 @@ struct LearningMenuView: View {
             }
             Spacer()
         }
+        .toolbar(.hidden, for: .tabBar)
         .padding()
     }
 }
 
 
 #Preview {
-    LearningMenuView()
+    LearningMenuView(subject: Subject(id: UUID().uuidString, title: ""))
 }

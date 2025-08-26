@@ -8,29 +8,127 @@
 import SwiftUI
 
 struct ChatView: View {
-    @State var text: String = ""
+    @ObservedObject var chatManager: ChatroomManager
+    let room: ChatRoom
+    @EnvironmentObject private var rootViewModel: RootViewModel
+    
+    @State var currentMessage: String = ""
+    @State var messages: [(text: String, isUser: Bool)] = []
+    @State var isLoading: Bool = false
+    
+    
     var body: some View {
         
-        ZStack {
-            ScrollView {
+        VStack {
+            CustomNavigationBar(
+                isDisplayLeftBtn: true,
+                isDisplayRightBtn: true,
+                leftBtnAction: {rootViewModel.goBack()},
+                leftBtnType: .chat,
+                rightBtnAction: {},
+                rightBtnType: .chat,
+                title: room.title
+            )
+            ScrollViewReader { proxy in
                 
-            
-                UserMessageBox(content: "안녕하세요.")
-                AiMessageBox(content: "안녕하세요. 저는 어재선입니다.")
+                
+                ScrollView {
+                    LazyVStack(spacing: 10) {
+                        ForEach(messages.indices, id: \.self) { index in
+                            let message = messages[index]
+                            
+                            HStack {
+                                if message.isUser {
+                                    Spacer()
+                                    UserMessageBox(content: message.text)
+                                } else {
+                                    AiMessageBox(content: message.text)
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+                    
+                }
+                .onChange(of: messages.count) { _ in
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        proxy.scrollTo(messages.count - 1, anchor: .bottom)
+                    }
+                }
+                
+                if isLoading {
+                    HStack {
+                        ProgressView()
+                            .scaleEffect(0.7)
+                        Text("답변 생성 중...")
+                            .foregroundColor(.gray)
+                            .font(.caption)
+                    }
+                    .padding()
+                }
+                
+//                HStack {
+//                    TextField("메시지를 입력하세요...", text: $currentMessage)
+//                        .textFieldStyle(RoundedBorderTextFieldStyle())
+//                        .disabled(isLoading)
+//                        .onSubmit {
+//                            sendMessage()
+//                        }
+//                    
+//                    Button("전송") {
+//                        sendMessage()
+//                    }
+//                    .disabled(currentMessage.isEmpty || isLoading)
+//                }
+//                .padding()
+                    InputUI(text: $currentMessage,enter: {sendMessage()}, isDisabled: currentMessage.isEmpty || isLoading)
+                        
+                    
+                
             }
-            VStack {
-                Spacer()
-                InputUI(text: $text)
-            }
-            
         }
-       
+        .onAppear{
+            loadChatHistory()
+            chatManager.selectChatRoom(room.id)
+        }
+        .toolbar(.hidden, for:.tabBar)
     }
+    
+    private func loadChatHistory() {
+        chatManager.selectChatRoom(room.id)
+        let history = chatManager.getCurrentChatHistory()
+        messages = history.map { message in
+            (text: message.content, isUser: message.role == "user")
+        }
+    }
+    
+    private func sendMessage() {
+        guard !currentMessage.isEmpty else { return }
+        
+        let message = currentMessage
+        currentMessage = ""
+        
+        // 사용자 메시지 추가
+        messages.append((text: message, isUser: true))
+        isLoading = true
+        
+        // AI에게 메시지 전송
+        chatManager.sendMessage(message) { response in
+            DispatchQueue.main.async {
+                isLoading = false
+                let aiResponse = response ?? "죄송합니다. 답변을 생성할 수 없습니다."
+                messages.append((text: aiResponse, isUser: false))
+            }
+        }
+    }
+    
 }
 
 
 private struct InputUI: View {
     @Binding var text: String
+    let enter: () -> Void
+    var isDisabled: Bool
     var body: some View {
         
         VStack {
@@ -54,6 +152,9 @@ private struct InputUI: View {
                         .font(.system(size: 20))
                         .padding(8)
                         .accentColor(.gray)
+                        .onSubmit {
+                            enter()
+                        }
                 }.overlay{
                     RoundedRectangle(cornerRadius: 32)
                         .stroke(.gray.opacity(0.5),lineWidth: 1)
@@ -62,6 +163,7 @@ private struct InputUI: View {
                 
                 Button{
                     //TODO: - 보내기 버튼 액션 추가
+                    enter()
                 } label: {
                     Image(systemName:"arrowshape.up.circle.fill")
                         .resizable()
@@ -69,6 +171,7 @@ private struct InputUI: View {
                         .frame(width: 40)
                 }
                 .padding(.leading, 8)
+                .disabled(isDisabled)
             }
             .background(.clear)
             
@@ -87,7 +190,7 @@ private struct AiMessageBox: View {
             Text(content)
                 .foregroundStyle(.black)
                 .padding(8)
-                
+            
         }
     }
 }
@@ -152,7 +255,4 @@ private struct MenuButtonView: View {
             
         }
     }
-}
-#Preview {
-    ChatView()
 }

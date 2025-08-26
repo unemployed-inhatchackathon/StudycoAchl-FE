@@ -17,6 +17,10 @@ struct CustomSubjectModalView: View {
     @Binding var text: String
     let modalType: SubjectModalType
     let xButtonAction: () -> Void
+    let addButtonAction: () -> Void
+    let cancelButtonAction: () -> Void
+    let deleteButtonAction: () -> Void
+    let editButtonAction: () -> Void
     var body: some View {
             
             VStack {
@@ -68,6 +72,13 @@ struct CustomSubjectModalView: View {
                
                 if modalType != .delete {
                     Button{
+                        if modalType == .add {
+                            addButtonAction()
+                        } else {
+                            editButtonAction()
+                        }
+                        
+                        
                     } label: {
                         Spacer()
                         Text("학인")
@@ -78,7 +89,8 @@ struct CustomSubjectModalView: View {
                 } else {
                     HStack {
                         Button{
-
+    
+                            deleteButtonAction()
                         } label: {
                             Spacer()
                             Text("삭제하기")
@@ -86,6 +98,8 @@ struct CustomSubjectModalView: View {
                         }
                         .buttonStyle(.borderedProminent)
                         Button{
+                            
+                            cancelButtonAction()
                         } label: {
                             Spacer()
                             Text("취소")
@@ -113,5 +127,5 @@ struct CustomSubjectModalView: View {
 }
 
 #Preview {
-    CustomSubjectModalView(text: Binding.constant(""), modalType: .delete, xButtonAction: {})
+    CustomSubjectModalView(text: Binding.constant(""), modalType: .delete, xButtonAction: {}, addButtonAction: {}, cancelButtonAction: {},deleteButtonAction: {}, editButtonAction: {})
 }
