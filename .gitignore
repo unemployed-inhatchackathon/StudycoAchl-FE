@@ -138,6 +138,11 @@ xcuserdata
 !*.xcodeproj/project.xcworkspace/
 !*.xcworkspace/contents.xcworkspacedata
 /*.gcno
+
 **/xcshareddata/WorkspaceSettings.xcsettings
 
+# apiKey
+OpenAIConfig.swift
 # End of https://www.toptal.com/developers/gitignore/api/swift,swiftpackagemanager,swiftpm,xcode,macos
+
+
