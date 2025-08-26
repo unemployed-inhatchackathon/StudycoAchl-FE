@@ -1,21 +1,26 @@
 //
-//  CustomChatModal.swift
+//  CustomProblemModal.swift
 //  StudycoAchI
 //
-//  Created by 어재선 on 8/19/25.
+//  Created by 어재선 on 8/24/25.
 //
 
 import SwiftUI
 
-enum CustomChatModalType {
-    case add
+enum CustomProblemModalType {
+    case add1
+    case add2
     case edit
     case delete
 }
 
-struct CustomChatModal: View {
+
+
+struct CustomProblemModal: View {
     @Binding var text: String
-    let modalType: CustomChatModalType
+    @State var modalType: CustomProblemModalType
+    @State var selectionCount = ""
+    
     
     var body: some View {
         VStack {
@@ -35,9 +40,12 @@ struct CustomChatModal: View {
                 Text("채팅방 수정하기")
                     .font(.system(size: 18))
             }
-            if modalType == .add {
-                Text("채팅방 추가하기")
-                .font(.system(size: 18))
+            if modalType == .add1 {
+                setTitleView()
+            }
+            
+            if modalType == .add2 {
+                SetCountView(selectedCount: $selectionCount)
             }
             
             if modalType == .delete {
@@ -50,7 +58,7 @@ struct CustomChatModal: View {
                 
             Spacer()
                 .frame(height: 20)
-            if modalType != .delete {
+            if modalType != .delete  && modalType != .add2{
                 TextField(text: $text) {
                     Text("제목을 입력해주세요.")
                 }
@@ -66,8 +74,11 @@ struct CustomChatModal: View {
                 .frame(height: 20)
            
             if modalType != .delete {
+                
                 Button{
-                    
+                    if modalType == .add1 {
+                        self.modalType = .add2
+                    }
                 } label: {
                     Spacer()
                     Text("학인")
@@ -103,8 +114,6 @@ struct CustomChatModal: View {
                 .frame(height: 20)
         }
         .padding()
-        .background(Color.white)
-        .cornerRadius(16, corners: .allCorners)
         .overlay{
             RoundedRectangle(cornerRadius: 16)
                 .stroke(.gray.opacity(0.1), lineWidth: 1)
@@ -114,6 +123,44 @@ struct CustomChatModal: View {
     }
 }
 
+private struct setTitleView: View {
+    var body: some View {
+        VStack {
+            Text("1/2")
+                .foregroundStyle(.gray)
+            Spacer()
+                .frame(height: 20)
+            Text("채팅방 추가하기")
+            .font(.system(size: 18))
+        }
+    }
+}
+
+private struct SetCountView: View {
+    let counts = ["5", "10", "15"]
+    @Binding var selectedCount: String
+    fileprivate var body: some View {
+        VStack {
+            Text("2/2")
+                .foregroundStyle(.gray)
+            Spacer()
+                .frame(height: 20)
+            Text("문제 수를 선택해주세요")
+            .font(.system(size: 18))
+            
+            Picker("", selection: $selectedCount) {
+                ForEach(counts, id: \.self) {
+                    Text($0)
+                }
+            }
+            .pickerStyle(.wheel)
+            .frame(height: 80)
+            
+        }
+    }
+}
+
+
 #Preview {
-    CustomChatModal(text: Binding.constant(""), modalType: .add)
+    CustomProblemModal(text: Binding.constant(""), modalType: .add2)
 }

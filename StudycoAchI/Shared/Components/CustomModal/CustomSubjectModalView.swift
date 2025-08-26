@@ -16,13 +16,14 @@ enum SubjectModalType {
 struct CustomSubjectModalView: View {
     @Binding var text: String
     let modalType: SubjectModalType
+    let xButtonAction: () -> Void
     var body: some View {
             
             VStack {
                 HStack {
                     Spacer()
                     Button{
-                        
+                        xButtonAction()
                     }label: {
                         Image(systemName: "xmark")
                             .foregroundStyle(.black)
@@ -99,6 +100,8 @@ struct CustomSubjectModalView: View {
                     .frame(height: 20)
             }
             .padding()
+            .background(Color.white)
+            .cornerRadius(16, corners: .allCorners)
             .overlay{
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(.gray.opacity(0.1), lineWidth: 1)
@@ -110,5 +113,5 @@ struct CustomSubjectModalView: View {
 }
 
 #Preview {
-    CustomSubjectModalView(text: Binding.constant(""), modalType: .delete)
+    CustomSubjectModalView(text: Binding.constant(""), modalType: .delete, xButtonAction: {})
 }
