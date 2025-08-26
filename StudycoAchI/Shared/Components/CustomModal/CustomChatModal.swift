@@ -103,6 +103,8 @@ struct CustomChatModal: View {
                 .frame(height: 20)
         }
         .padding()
+        .background(Color.white)
+        .cornerRadius(16, corners: .allCorners)
         .overlay{
             RoundedRectangle(cornerRadius: 16)
                 .stroke(.gray.opacity(0.1), lineWidth: 1)

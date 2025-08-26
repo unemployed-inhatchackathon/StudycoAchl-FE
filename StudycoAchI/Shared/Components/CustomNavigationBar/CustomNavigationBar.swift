@@ -11,24 +11,24 @@ import SwiftUI
 struct CustomNavigationBar: View {
     let isDisplayLeftBtn: Bool
     let isDisplayRightBtn: Bool
-    let isMainTitle: Bool
     let leftBtnAction: () -> Void
+    let leftBtnType: NavigationBtnType
     let rightBtnAction: () -> Void
     let rightBtnType: NavigationBtnType
     let title: String?
     init(
         isDisplayLeftBtn: Bool = true,
         isDisplayRightBtn: Bool = true,
-        isMainTitle: Bool = true,
         leftBtnAction: @escaping () -> Void = { },
+        leftBtnType: NavigationBtnType = .home,
         rightBtnAction: @escaping () -> Void = { },
         rightBtnType: NavigationBtnType = .home,
         title: String? = nil
     ) {
         self.isDisplayLeftBtn = isDisplayLeftBtn
         self.isDisplayRightBtn = isDisplayRightBtn
-        self.isMainTitle = isMainTitle
         self.leftBtnAction = leftBtnAction
+        self.leftBtnType = leftBtnType
         self.rightBtnAction = rightBtnAction
         self.rightBtnType = rightBtnType
         self.title = title
@@ -38,12 +38,7 @@ struct CustomNavigationBar: View {
         ZStack{
             HStack(alignment: .center  ){
                 Spacer()
-                if isMainTitle {
-                    Text("마음 채비")
-                        .font(.system(size: 20, weight: .bold))
-                } else {
                     Text(title ?? "타이틀")
-                }
                 Spacer()
             }
             HStack {
@@ -51,11 +46,21 @@ struct CustomNavigationBar: View {
                 if isDisplayLeftBtn {
                     Button(
                         action: leftBtnAction,
-                        label: { Image(systemName: "chevron.left")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 16, height: 16)
-                                .foregroundStyle(.gray)
+                        label: {
+                            if leftBtnType == .home {
+                                Image(systemName:"person.crop.circle")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 24, height: 24)
+                                    .foregroundStyle(.gray)
+                            }
+                            else {
+                                Image(systemName: "chevron.left")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 16, height: 16)
+                                    .foregroundStyle(.gray)
+                            }
                         }
                     )
                 }
@@ -81,8 +86,8 @@ struct CustomNavigationBar: View {
                 }
             }
         }
-        .padding(.leading, 8)
-        .padding(.trailing, 8)
+        .padding(.leading, 16)
+        .padding(.trailing, 16)
        
     }
     

@@ -8,63 +8,131 @@
 import SwiftUI
 
 struct RootView: View {
+    @StateObject private var pathmodel = PathModel()
+    @StateObject private var rootViewModel = RootViewModel()
     var body: some View {
-        NavigationStack {
-            List {
-                NavigationLink(destination: ChatListView()) {
-                    Text("ChatListView")
+        ZStack {
+            TabView(selection: $rootViewModel.selectedTab) {
+                NavigationStack(path: $rootViewModel.paths) {
+                    HomeView()
+                        .navigationDestination(for: PathType.self) { path in
+                            destinationView(for: path)
+                        }
+                }.tabItem {
+                    Image(systemName: rootViewModel.selectedTab == .home ? "house" : "house")
                 }
-                NavigationLink(destination: ChatView()) {
-                  Text("ChatView")
-                }
-                NavigationLink(destination: HomeView()) {
-                    Text("HomeView")
-                }
-                NavigationLink(destination: LearningMenu()) {
-                    Text("LearningMenu")
-                }
-                NavigationLink(destination: ProblemListView()) {
-                    Text("ProblemListView")
-                }
-                NavigationLink(destination: ProblemSolvingView()) {
-                    Text("ProblemSolvingView")
-                }
-                NavigationLink(destination: CustomChatModal(text: Binding.constant(""), modalType: .add)) {
-                    Text("CustomChatModal: add")
-                }
-                NavigationLink(destination: CustomChatModal(text: Binding.constant(""), modalType: .delete)) {
-                    Text("CustomChatModal: delete")
-                }
-                NavigationLink(destination: CustomChatModal(text: Binding.constant(""), modalType: .edit)) {
-                    Text("CustomChatModal: edit")
-                }
-                NavigationLink(destination: CustomProblemModal(text: Binding.constant(""), modalType: .add1)) {
-                    Text("CustomProblemmodal: add1")
-                }
-                NavigationLink(destination: CustomProblemModal(text: Binding.constant(""), modalType: .add2)) {
-                    Text("CustomProblemmodal: add2")
-                }
-                NavigationLink(destination: CustomProblemModal(text: Binding.constant(""), modalType: .delete)) {
-                    Text("CustomProblemmodal: delete")
-                }
-                NavigationLink(destination: CustomProblemModal(text: Binding.constant(""), modalType: .edit)) {
-                    Text("CustomProblemmodal: edit")
-                }
-                NavigationLink(destination: CustomSubjectModalView(text: Binding.constant(""), modalType: .add)) {
-                    Text("CustomProblemmodal: add")
-                }
-                NavigationLink(destination: CustomSubjectModalView(text: Binding.constant(""), modalType: .delete)) {
-                    Text("CustomSubjectmodal: delete")
-                }
-                NavigationLink(destination: CustomSubjectModalView(text: Binding.constant(""), modalType: .edit)) {
-                    Text("CustomSubjectmodal: edit")
-                }
+                .tag(Tab.home)
+                
+                BookMarkView()
+                    .tabItem {
+                        Image(systemName:
+                                rootViewModel.selectedTab == .bookMark ? "bookmark.fill" : "bookmark")
+                    }
+                    .tag(Tab.bookMark)
+                ActivityView()
+                    .tabItem {
+                        Image(systemName: rootViewModel.selectedTab == .activity ? "chart.bar.fill" :"chart.bar")
+                    }
+                    .tag(Tab.activity)
+                MyPageView()
+                    .tabItem {
+                        Image(systemName: rootViewModel.selectedTab == .myPage ? "person.fill" : "person")
+                    }
+                    .tag(Tab.myPage)
+                
             }
+            .environmentObject(rootViewModel)
+            
+            SeperatorLineView()
         }
-        
+    }
+    
+    @ViewBuilder
+    func destinationView(for path: PathType) -> some View {
+        switch path {
+        case .learningMenuView:
+            LearningMenuView()
+        case .chatDetailView(_):
+            ChatView()
+        case .cahtListView:
+            ChatListView()
+        }
     }
 }
+
+private struct SeperatorLineView: View {
+  fileprivate var body: some View {
+    VStack {
+      Spacer()
+      
+      Rectangle()
+        .fill(
+          LinearGradient(
+            gradient: Gradient(colors: [Color.white, Color.gray.opacity(0.1)]),
+            startPoint: .top,
+            endPoint: .bottom
+          )
+        )
+        .frame(height: 10)
+        .padding(.bottom, 60)
+    }
+  }
+}
+
 
 #Preview {
     RootView()
 }
+
+//NavigationStack {
+//    List {
+//        NavigationLink(destination: ChatListView()) {
+//            Text("ChatListView")
+//        }
+//        NavigationLink(destination: ChatView()) {
+//          Text("ChatView")
+//        }
+//        NavigationLink(destination: HomeView()) {
+//            Text("HomeView")
+//        }
+//        NavigationLink(destination: LearningMenuView()) {
+//            Text("LearningMenu")
+//        }
+//        NavigationLink(destination: ProblemListView()) {
+//            Text("ProblemListView")
+//        }
+//        NavigationLink(destination: ProblemSolvingView()) {
+//            Text("ProblemSolvingView")
+//        }
+//        NavigationLink(destination: CustomChatModal(text: Binding.constant(""), modalType: .add)) {
+//            Text("CustomChatModal: add")
+//        }
+//        NavigationLink(destination: CustomChatModal(text: Binding.constant(""), modalType: .delete)) {
+//            Text("CustomChatModal: delete")
+//        }
+//        NavigationLink(destination: CustomChatModal(text: Binding.constant(""), modalType: .edit)) {
+//            Text("CustomChatModal: edit")
+//        }
+//        NavigationLink(destination: CustomProblemModal(text: Binding.constant(""), modalType: .add1)) {
+//            Text("CustomProblemmodal: add1")
+//        }
+//        NavigationLink(destination: CustomProblemModal(text: Binding.constant(""), modalType: .add2)) {
+//            Text("CustomProblemmodal: add2")
+//        }
+//        NavigationLink(destination: CustomProblemModal(text: Binding.constant(""), modalType: .delete)) {
+//            Text("CustomProblemmodal: delete")
+//        }
+//        NavigationLink(destination: CustomProblemModal(text: Binding.constant(""), modalType: .edit)) {
+//            Text("CustomProblemmodal: edit")
+//        }
+//        NavigationLink(destination: CustomSubjectModalView(text: Binding.constant(""), modalType: .add)) {
+//            Text("CustomProblemmodal: add")
+//        }
+//        NavigationLink(destination: CustomSubjectModalView(text: Binding.constant(""), modalType: .delete)) {
+//            Text("CustomSubjectmodal: delete")
+//        }
+//        NavigationLink(destination: CustomSubjectModalView(text: Binding.constant(""), modalType: .edit)) {
+//            Text("CustomSubjectmodal: edit")
+//        }
+//    }
+//}
