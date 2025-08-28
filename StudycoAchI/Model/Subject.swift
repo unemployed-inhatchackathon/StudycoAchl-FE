@@ -11,5 +11,6 @@ import Foundation
 struct Subject: Equatable, Hashable {
     let id: String
     var title: String
+    
 
 }
