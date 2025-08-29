@@ -13,6 +13,7 @@ struct HomeView: View {
     @EnvironmentObject private var rootViewModel: RootViewModel
     
     var body: some View {
+        
         ZStack {
             VStack {
                 CustomNavigationBar(title: "")
@@ -27,12 +28,13 @@ struct HomeView: View {
                     CustomAddButton(btnType: .subject, btnAction: {
                         homeViewModel.alertType = .add
                         homeViewModel.isShowAlert = true
-                        
                     })
+                    
                     Spacer()
                         .frame(height: 26)
+                    
                     // 과목 리스트
-                    ForEach(homeViewModel.subjects, id: \.id) { subject in
+                    ForEach(homeViewModel.subjects, id: \.uuid) { subject in
                         SubjectCellView(title: subject.title)
                             .contextMenu{
                                 Text("\(subject.title)")
@@ -80,10 +82,18 @@ struct HomeView: View {
                     text: $homeViewModel.newSubjectName,
                     modalType: homeViewModel.alertType,
                     xButtonAction: { homeViewModel.dismissAlert() },
-                    addButtonAction: { homeViewModel.addSubject()},
+                    addButtonAction: {
+//                        homeViewModel.addSubject()
+                        homeViewModel.createSubject()
+                    },
                     cancelButtonAction: {homeViewModel.dismissAlert()},
-                    deleteButtonAction: {homeViewModel.deleteSubject(homeViewModel.selectedSubject?.id  ?? UUID().uuidString)},
-                    editButtonAction: {homeViewModel.editSubject( homeViewModel.selectedSubject?.id ?? UUID().uuidString, newTitle: homeViewModel.newSubjectName)}
+                    deleteButtonAction: {
+                        homeViewModel.deleteSubject()
+//                        homeViewModel.deleteSubject(homeViewModel.selectedSubject?.id  ?? UUID().uuidString)
+                    },
+                    editButtonAction: {
+//                        homeViewModel.editSubject( homeViewModel.selectedSubject?.id ?? UUID().uuidString, newTitle: homeViewModel.newSubjectName)
+                    }
                 )
                     .transition(.scale.combined(with: .opacity))
             }
@@ -92,6 +102,16 @@ struct HomeView: View {
         .animation(.spring(duration: 0.3), value: homeViewModel.isShowAlert)
         .onDisappear {
             homeViewModel.dismissAlert()
+        }
+        .onAppear{
+            Task {
+                await homeViewModel.getSubjects()
+            }
+        }
+        .refreshable {
+            Task {
+                await homeViewModel.getSubjects()
+            }
         }
     }
 }

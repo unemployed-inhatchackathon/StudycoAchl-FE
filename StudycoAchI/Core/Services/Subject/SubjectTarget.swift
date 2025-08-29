@@ -47,14 +47,14 @@ extension SubjectTarget: BaseTargetType {
     var task: Moya.Task {
         switch self {
             
-        case .createSubject(uuid: let uuid, name: let name):
+        case .createSubject(_, name: let name):
             let body =  name.data(using: .utf8)!
             return .requestData(body)
-        case .deleteSubject(uuid: let uuid):
+        case .deleteSubject(_):
                 return .requestPlain
-        case .getSubjects(uuid: let uuid):
+        case .getSubjects(_):
             return .requestPlain
-        case .editSubject(uuid: let uuid, newName: let newName):
+        case .editSubject(_, newName: let newName):
             let parameters = ["title": newName]
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         }

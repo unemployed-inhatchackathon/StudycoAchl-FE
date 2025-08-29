@@ -10,7 +10,7 @@ import SwiftUI
 struct LearningMenuView: View {
     @EnvironmentObject private var pathModel: PathModel
     @EnvironmentObject private var rootViewModel: RootViewModel
-    let subject: Subject
+    let subject: SubjectResponse
     var columns: [GridItem] = Array(repeating: .init(.flexible(),spacing: 30), count: 2)
     var body: some View {
         VStack{
@@ -48,5 +48,5 @@ struct LearningMenuView: View {
 
 
 #Preview {
-    LearningMenuView(subject: Subject(id: UUID().uuidString, title: ""))
+    LearningMenuView(subject: SubjectResponse(uuid: "", title: "", createdAt: "", userUUID: ""))
 }

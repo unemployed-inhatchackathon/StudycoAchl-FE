@@ -12,7 +12,7 @@ struct ChatListView: View {
     @EnvironmentObject private var pathModel: PathModel
     @EnvironmentObject private var rootViewModel: RootViewModel
     
-    let subject: Subject
+    let subject: SubjectResponse
     @State private var showAlert: Bool = false
     @State private var newChatTitle = ""
     @State private var selectRoomId: String?
@@ -121,7 +121,7 @@ private struct ChatListCellView: View {
 }
 
 #Preview {
-    ChatListView(subject: Subject(id: UUID().uuidString, title: ""))
+    ChatListView(subject: SubjectResponse(uuid: "", title: "", createdAt: "", userUUID: ""))
         .environmentObject(PathModel())
         .environmentObject(ChatroomManager())
         .environmentObject(RootViewModel())
